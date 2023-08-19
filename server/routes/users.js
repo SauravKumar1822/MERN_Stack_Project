@@ -21,13 +21,31 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
     const {username, password} = req.body;
-    const user = {
-        username,
-        password
-    }
-    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
-    res.status(200).json({accessToken});
+    const user = await UserModel.findOne({username});
+
+    if(!user) return res.status(400).json({message: 'User does not exist'});
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if(!isMatch) return res.status(400).json({message: 'Invalid credentials'});
+
+    const accessToken = jwt.sign({id: user._id}, "secret", {expiresIn: '7d'});
+    res.status(200).json({token: accessToken});
 });
 
+// router.get('/verify', async (req, res) => {
+//     try {
+//         const token = req.headers.authorization;
+//         if(!token) return res.status(401).json({message: 'You are not authenticated'});
+//         const verified = await jwt.verify(token, "secret");
+//         const user = await UserModel.findById(verified.id);
+//         if(!verified) return res.status(401).json({message: 'You are not authenticated'});
+//         return res.status(200).json({user});
+//     } catch (error) {
+//         return res.status(500).json({message: error.message});
+//     }
+// });
+
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTBmY2ZlNDhkYWJkYTU0NmE5NGYxNiIsImlhdCI6MTY5MjQ2NzkwMywiZXhwIjoxNjkzMDcyNzAzfQ.QzuyXXWdnWrsEDPAENtP00Vbms7l0FxLx0OPUH-xXYc
 
 export default router;
