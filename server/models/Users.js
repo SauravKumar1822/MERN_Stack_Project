@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({ // create a new mongoose schema
         trim: true, // trim is true
         minlength: 6 // minlength is 3
     },
+    savedRecipes: [{type: mongoose.Schema.Types.ObjectId, ref: "Recipes"}] // savedRecipes is an array of mongoose.Schema.Types.ObjectId
 }, {
     timestamps: true, // timestamps is true
 });
