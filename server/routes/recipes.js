@@ -15,7 +15,8 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-    const { title, ingredients, instructions, imageUrl, cookingTime, userOwner } = req.body;
+    const { title, ingredients, instructions, imageUrl, cookingTime, userOwner} = req.body;
+    console.log(req.body);
     const newRecipe = new RecipieModel({
         title,
         ingredients,
